@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat Médico</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #E3F2FD;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+        .login-container, .chat-container, .appointments-container {
+            width: 90%;
+            max-width: 400px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            padding: 20px;
+            text-align: center;
+        }
+        .chat-container, .appointments-container { display: none; }
+        input {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        button {
+            background: #1976D2;
+            color: white;
+            border: none;
+            padding: 10px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container" id="loginContainer">
+        <h2>Iniciar Sesión</h2>
+        <input type="text" id="username" placeholder="Usuario">
+        <input type="password" id="password" placeholder="Contraseña">
+        <button onclick="login()">Ingresar</button>
+        <p id="error" style="color: red; display: none;">Usuario o contraseña incorrectos</p>
+    </div>
+
+    <div class="appointments-container" id="appointmentsContainer">
+        <h2>Mis Citas</h2>
+        <ul id="appointmentsList"></ul>
+        <button onclick="showChat()">Ir al Chat</button>
+    </div>
+
+    <div class="chat-container" id="chatContainer">
+        <div class="chat-header">Chat Médico</div>
+        <div class="chat-messages" id="chatMessages"></div>
+        <div class="chat-input">
+            <input type="text" id="messageInput" placeholder="Escribe un mensaje...">
+            <button onclick="sendMessage()">Enviar</button>
+        </div>
+    </div>
+
+    <script>
+        function login() {
+            var user = document.getElementById("username").value;
+            var pass = document.getElementById("password").value;
+            
+            // Simulación de verificación (conectar a BD más adelante)
+            if (user === "admin" && pass === "1234") {
+                document.getElementById("loginContainer").style.display = "none";
+                document.getElementById("appointmentsContainer").style.display = "block";
+                loadAppointments();
+            } else {
+                document.getElementById("error").style.display = "block";
+            }
+        }
+        
+        function loadAppointments() {
+            var appointments = ["Consulta general - 10/02/2025", "Revisión cardiológica - 15/02/2025"];
+            var list = document.getElementById("appointmentsList");
+            list.innerHTML = "";
+            appointments.forEach(app => {
+                var li = document.createElement("li");
+                li.textContent = app;
+                list.appendChild(li);
+            });
+        }
+        
+        function showChat() {
+            document.getElementById("appointmentsContainer").style.display = "none";
+            document.getElementById("chatContainer").style.display = "block";
+        }
+        
+        function sendMessage() {
+            var input = document.getElementById("messageInput");
+            var message = input.value.trim();
+            if (message !== "") {
+                var chatMessages = document.getElementById("chatMessages");
+                var messageElement = document.createElement("div");
+                messageElement.classList.add("message", "sent");
+                messageElement.textContent = message;
+                chatMessages.appendChild(messageElement);
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+                input.value = "";
+            }
+        }
+    </script>
+</body>
+</html>

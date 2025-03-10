@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Página de Pago</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #F3F4F6;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .payment-container {
+            background: white;
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            width: 400px;
+        }
+        h2 {
+            text-align: center;
+            color: #1976D2;
+        }
+        .input-group {
+            margin-bottom: 15px;
+        }
+        .input-group label {
+            font-size: 14px;
+            color: #555;
+            display: block;
+            margin-bottom: 5px;
+        }
+        input[type="text"], input[type="password"], input[type="date"], input[type="number"] {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        button {
+            background-color: #1976D2;
+            color: white;
+            border: none;
+            padding: 15px;
+            border-radius: 5px;
+            width: 100%;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #1565C0;
+        }
+        .footer {
+            text-align: center;
+            font-size: 12px;
+            margin-top: 10px;
+            color: #555;
+        }
+    </style>
+</head>
+<body>
+    <div class="payment-container">
+        <h2>Formulario de Pago</h2>
+        <form id="paymentForm">
+            <div class="input-group">
+                <label for="cardNumber">Número de tarjeta</label>
+                <input type="text" id="cardNumber" name="cardNumber" placeholder="Ej. 1234 5678 9876 5432" maxlength="16" required>
+            </div>
+            <div class="input-group">
+                <label for="cardHolder">Titular de la tarjeta</label>
+                <input type="text" id="cardHolder" name="cardHolder" placeholder="Nombre completo" required>
+            </div>
+            <div class="input-group">
+                <label for="expiryDate">Fecha de vencimiento</label>
+                <input type="month" id="expiryDate" name="expiryDate" required>
+            </div>
+            <div class="input-group">
+                <label for="cvv">Código de seguridad (CVV)</label>
+                <input type="password" id="cvv" name="cvv" placeholder="Ej. 123" maxlength="3" required>
+            </div>
+            <button type="submit">Pagar</button>
+        </form>
+        <div class="footer">
+            <p>Seguridad garantizada con encriptación SSL</p>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById("paymentForm").addEventListener("submit", function(event) {
+            event.preventDefault();
+
+            // Aquí puedes agregar la lógica para procesar el pago con la API del sistema de pagos
+            alert("Pago procesado correctamente.");
+        });
+    </script>
+</body>
+</html>

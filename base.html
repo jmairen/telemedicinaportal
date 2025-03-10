@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lista de Medicamentos</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            margin: 0;
+            padding: 20px;
+            text-align: center;
+        }
+        .container {
+            max-width: 600px;
+            margin: auto;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .med-list {
+            list-style: none;
+            padding: 0;
+            max-height: 400px;
+            overflow-y: auto;
+            border: 1px solid #ccc;
+            padding: 10px;
+        }
+        .med-list li {
+            padding: 10px;
+            background: #e3f2fd;
+            margin: 5px 0;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        .med-details {
+            margin-top: 20px;
+            display: none;
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Lista de Medicamentos</h2>
+        <ul class="med-list" id="medList"></ul>
+        
+        <div class="med-details" id="medDetails">
+            <h3 id="medName"></h3>
+            <p id="medDesc"></p>
+            <p><strong>Venta:</strong> <span id="medVenta"></span></p>
+        </div>
+    </div>
+
+    <script>
+        const medicamentos = {};
+        
+        const nombresMedicamentos = [
+            "Paracetamol", "Ibuprofeno", "Amoxicilina", "Metformina", "Loratadina", "Omeprazol", "Atorvastatina", "Losartán", "Simvastatina", "Salbutamol",
+            "Aspirina", "Clopidogrel", "Captopril", "Furosemida", "Levotiroxina", "Metronidazol", "Prednisona", "Cefalexina", "Hidroxicloroquina", "Insulina",
+            "Nitroglicerina", "Benzonatato", "Montelukast", "Dextrometorfano", "Enalapril", "Amlodipino", "Doxazosina", "Esomeprazol", "Clorfenamina", "Glibenclamida",
+            "Sulfametoxazol/Trimetoprim", "Diclofenaco", "Carbamazepina", "Ranitidina", "Clonazepam", "Diazepam", "Lansoprazol", "Meloxicam", "Naproxeno",
+            "Aciclovir", "Oseltamivir", "Betametasona", "Lorazepam", "Fenitoína", "Metoclopramida", "Ondansetrón", "Propranolol", "Atenolol", "Duloxetina",
+            "Sertralina", "Fluoxetina", "Escitalopram", "Citalopram", "Venlafaxina", "Trazodona", "Mirtazapina", "Bupropión", "Risperidona", "Quetiapina",
+            "Olanzapina", "Clozapina", "Aripiprazol", "Haloperidol", "Ziprasidona", "Lamotrigina", "Valproato", "Topiramato", "Gabapentina", "Pregabalina",
+            "Fentanilo", "Morfina", "Oxicodona", "Hidrocodona", "Codeína", "Tramadol", "Metadona", "Buprenorfina", "Naltrexona", "Disulfiram", "Acamprosato",
+            "Loperamida", "Bisacodilo", "Senósidos", "Lactulosa", "Polyethylene glycol (PEG)", "Bromuro de ipratropio", "Tiotropio", "Fluticasona", "Budesonida", "Beclometasona",
+            "Mometasona", "Ciclesonida", "Formoterol", "Salmeterol", "Theophylline", "Montelukast", "Zafirlukast", "Omalizumab", "Mepolizumab", "Reslizumab",
+            "Benralizumab", "Dupilumab", "Epinefrina", "Difenhidramina", "Clemastina", "Meclizina", "Dimenhidrinato", "Prometazina", "Feniramina", "Hidroxicina",
+            "Levocetirizina", "Desloratadina", "Fexofenadina", "Cetirizina", "Famotidina", "Cimetidina", "Nizatidina", "Misoprostol", "Sucralfato", "Gliclazida",
+            "Pioglitazona", "Sitagliptina", "Vildagliptina", "Linagliptina", "Liraglutida", "Exenatida", "Dulaglutida", "Lixisenatida", "Insulina glargina",
+            "Insulina lispro", "Insulina aspart", "Insulina detemir", "Insulina degludec", "Alopurinol", "Febuxostat", "Colchicina", "Metotrexato", "Ciclosporina"
+        ];
+        
+        nombresMedicamentos.forEach(nombre => {
+            medicamentos[nombre] = {
+                desc: "Medicamento utilizado para tratar diversas condiciones.",
+                venta: Math.random() > 0.5 ? "Venta libre" : "Solo con receta médica"
+            };
+        });
+
+        const medList = document.getElementById("medList");
+        nombresMedicamentos.forEach(nombre => {
+            let li = document.createElement("li");
+            li.textContent = nombre;
+            li.onclick = () => showDetails(nombre);
+            medList.appendChild(li);
+        });
+        
+        function showDetails(medName) {
+            document.getElementById("medName").textContent = medName;
+            document.getElementById("medDesc").textContent = medicamentos[medName].desc;
+            document.getElementById("medVenta").textContent = medicamentos[medName].venta;
+            document.getElementById("medDetails").style.display = "block";
+        }
+    </script>
+</body>
+</html>

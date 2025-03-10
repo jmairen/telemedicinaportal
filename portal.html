@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portal de Servicios</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #E3F2FD;
+            color: #0D47A1;
+            text-align: center;
+            animation: fadeIn 1.5s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .container {
+            padding: 50px;
+        }
+
+        h1 {
+            color: #1976D2;
+            animation: slideDown 1s ease-in-out;
+        }
+
+        @keyframes slideDown {
+            from { transform: translateY(-50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .services {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            padding: 20px;
+        }
+
+        .service {
+            background-color: #BBDEFB;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease-in-out, background-color 0.3s;
+        }
+
+        .service:hover {
+            transform: scale(1.05);
+            background-color: #90CAF9;
+        }
+
+        a {
+            display: block;
+            margin-top: 10px;
+            color: #0d66a1;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .logo {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            width: 80px;
+            height: auto;
+            animation: fadeIn 2s ease-in-out;
+        }
+    </style>
+</head>
+<body>
+
+    <img src="UTH.jpg" alt="Logo Salud en Línea" class="logo">
+
+    <div class="container">
+        <h1>Portal de Servicios</h1>
+        <div class="services">
+            <div class="service">📄 Perfil de usuario<a href="usuario.html" target="_blank">Ver más</a></div>
+            <div class="service">💬 Chat con médicos<a href="medicos.html" target="_blank">Acceder</a></div>
+            <div class="service">🤖 Asistente de IA<a href="asistente.html" target="_blank">Consultar</a></div>
+            <div class="service">📅 Gestión de citas<a href="gestion.html" target="_blank">Agendar</a></div>
+            <div class="service">📜 Historia clínica<a href="historia.html" target="_blank">Consultar</a></div>
+            <div class="service">💊 Base de datos de medicamentos<a href="base.html" target="_blank">Explorar</a></div>
+            <div class="service">💳 Pagos en línea<a href="pago.html" target="_blank">Pagar</a></div>
+            <div class="service">📊 Panel de administración<a href="administracion.html" target="_blank">Gestionar</a></div>
+        </div>
+    </div>
+
+</body>
+</html>
