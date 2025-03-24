@@ -25,14 +25,26 @@
             flex-direction: column;
             padding: 20px;
             text-align: center;
+            height: 80vh;
+        }
+        .chat-header {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 15px;
+        }
+        .chat-header img {
+            width: 30px;
+            margin-right: 10px;
         }
         .chat-messages {
-            height: 300px;
+            height: calc(100% - 120px);
             overflow-y: auto;
             padding: 10px;
             border: 1px solid #ccc;
             border-radius: 5px;
             margin-bottom: 20px;
+            text-align: left;
         }
         .chat-input {
             display: flex;
@@ -48,42 +60,96 @@
             background: #1976D2;
             color: white;
             border: none;
-            padding: 10px;
+            padding: 10px 15px;
             cursor: pointer;
             border-radius: 5px;
             margin-left: 5px;
+            transition: background 0.3s;
+        }
+        button:hover {
+            background: #1565C0;
         }
         .message {
             padding: 10px;
-            margin: 5px;
-            border-radius: 5px;
-            max-width: 70%;
+            margin: 10px 5px;
+            border-radius: 10px;
+            max-width: 80%;
+            position: relative;
+            clear: both;
         }
         .sent {
-            background: #90CAF9;
-            text-align: right;
+            background: #E3F2FD;
+            float: right;
+            border-bottom-right-radius: 2px;
         }
         .received {
-            background: #BBDEFB;
-            text-align: left;
+            background: #F5F5F5;
+            float: left;
+            border-bottom-left-radius: 2px;
         }
         .info {
             font-size: 0.9em;
             color: gray;
             text-align: center;
+            clear: both;
+            margin: 10px 0;
         }
         .timestamp {
             font-size: 0.8em;
             color: #666;
+            display: block;
+            margin-bottom: 5px;
+        }
+        .suggestions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+            margin-top: 10px;
+            justify-content: center;
+        }
+        .suggestion-chip {
+            background: #E8EAF6;
+            border: 1px solid #C5CAE9;
+            border-radius: 15px;
+            padding: 5px 10px;
+            font-size: 0.85em;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        .suggestion-chip:hover {
+            background: #C5CAE9;
+        }
+        .clearfix::after {
+            content: "";
+            clear: both;
+            display: table;
         }
     </style>
 </head>
 <body>
     <div class="chat-container">
-        <h2>Asistente IA - Chat Médico</h2>
-        <div class="chat-messages" id="chatMessages"></div>
+        <div class="chat-header">
+            <h2>Asistente IA - Chat Médico</h2>
+        </div>
+        <div class="chat-messages" id="chatMessages">
+            <!-- Mensaje de bienvenida inicial -->
+            <div class="message received">
+                <span class="timestamp">Asistente, hoy</span>
+                ¡Hola! Soy tu Asistente Médico Virtual. Puedo ayudarte con información básica sobre síntomas comunes como dolor de cabeza, fiebre, tos, resfriados y otros problemas de salud leves. 
+                
+                Recuerda: Este asistente NO sustituye el diagnóstico de un profesional médico. Si tienes síntomas graves o persistentes, siempre es mejor consultar a un médico.
+
+                ¿En qué puedo ayudarte hoy? Puedes seleccionar un síntoma de abajo o escribirme directamente.
+            </div>
+            <div class="suggestions">
+                <div class="suggestion-chip" onclick="usesuggestion('dolor de cabeza')">Dolor de cabeza</div>
+                <div class="suggestion-chip" onclick="usesuggestion('fiebre')">Fiebre</div>
+                <div class="suggestion-chip" onclick="usesuggestion('tos')">Tos</div>
+                <div class="suggestion-chip" onclick="usesuggestion('dolor de estómago')">Dolor de estómago</div>
+            </div>
+        </div>
         <div class="chat-input">
-            <input type="text" id="messageInput" placeholder="Escribe un mensaje...">
+            <input type="text" id="messageInput" placeholder="Escribe un mensaje..." onkeypress="handleKeyPress(event)">
             <button onclick="sendMessage()">Enviar</button>
         </div>
     </div>
@@ -93,9 +159,18 @@
             const now = new Date();
             const hours = now.getHours().toString().padStart(2, '0');
             const minutes = now.getMinutes().toString().padStart(2, '0');
-            const day = now.getDate();
-            const month = now.toLocaleString('default', { month: 'short' });
-            return `${hours}:${minutes}, ${month} ${day}`;
+            return `${hours}:${minutes}`;
+        }
+        
+        function handleKeyPress(event) {
+            if (event.key === "Enter") {
+                sendMessage();
+            }
+        }
+        
+        function usesuggestion(text) {
+            document.getElementById("messageInput").value = text;
+            sendMessage();
         }
 
         function sendMessage() {
@@ -107,124 +182,97 @@
 
                 // Crear mensaje enviado por el usuario
                 var messageElement = document.createElement("div");
-                messageElement.classList.add("message", "sent");
-                messageElement.innerHTML = `<span class="timestamp">Usted en ${timestamp}:</span> ${message}`;
+                messageElement.classList.add("message", "sent", "clearfix");
+                messageElement.innerHTML = `<span class="timestamp">Usted, ${timestamp}</span> ${message}`;
                 chatMessages.appendChild(messageElement);
 
                 // Limpiar campo de entrada
                 input.value = "";
 
-                // Mostrar mensaje de espera de la IA
-                var infoElement = document.createElement("div");
-                infoElement.classList.add("message", "received");
-                infoElement.innerHTML = `<span class="timestamp">Información en ${timestamp}:</span> Gracias por enviar un mensaje. Estamos procesando tu solicitud, por favor espera...`;
-                chatMessages.appendChild(infoElement);
+                // Mostrar indicador de escritura (tres puntos)
+                var typingElement = document.createElement("div");
+                typingElement.classList.add("message", "received", "clearfix");
+                typingElement.id = "typing-indicator";
+                typingElement.innerHTML = `<span class="timestamp">Asistente, ${timestamp}</span> <div class="typing-dots">...</div>`;
+                chatMessages.appendChild(typingElement);
 
                 // Hacer scroll al último mensaje
                 chatMessages.scrollTop = chatMessages.scrollHeight;
 
-                // Simular una respuesta de la IA después de 2 segundos
+                // Simular una respuesta de la IA después de 1.5 segundos
                 setTimeout(() => {
+                    // Eliminar el indicador de escritura
+                    document.getElementById("typing-indicator").remove();
+                    
                     var assistantResponse = generateResponse(message);
                     var assistantMessageElement = document.createElement("div");
-                    assistantMessageElement.classList.add("message", "received");
-                    assistantMessageElement.innerHTML = `<span class="timestamp">Información en ${timestamp}:</span> ${assistantResponse}`;
+                    assistantMessageElement.classList.add("message", "received", "clearfix");
+                    assistantMessageElement.innerHTML = `<span class="timestamp">Asistente, ${timestamp}</span> ${assistantResponse}`;
                     chatMessages.appendChild(assistantMessageElement);
-
+                    
+                    // Si no se encontró una respuesta predeterminada, mostrar sugerencias
+                    if (assistantResponse.includes("no puedo ayudarte con esa pregunta")) {
+                        var suggestionsElement = document.createElement("div");
+                        suggestionsElement.classList.add("suggestions");
+                        suggestionsElement.innerHTML = `
+                            <div class="suggestion-chip" onclick="usesuggestion('dolor de cabeza')">Dolor de cabeza</div>
+                            <div class="suggestion-chip" onclick="usesuggestion('fiebre')">Fiebre</div>
+                            <div class="suggestion-chip" onclick="usesuggestion('tos')">Tos</div>
+                            <div class="suggestion-chip" onclick="usesuggestion('dolor de estómago')">Dolor de estómago</div>
+                        `;
+                        chatMessages.appendChild(suggestionsElement);
+                    }
                     
                     chatMessages.scrollTop = chatMessages.scrollHeight;
-                }, 2000);
+                }, 1500);
             }
         }
 
         function generateResponse(message) {
-            // Detectar palabras clave en el mensaje del usuario
-            if (message.toLowerCase().includes("dolor de cabeza")) {
-                return "Si tienes dolor de cabeza, es recomendable descansar en un lugar tranquilo, tomar agua y si el dolor persiste, podrías considerar tomar un analgésico como paracetamol o ibuprofeno.";
+            // Convertir el mensaje a minúsculas para comparación
+            const lowerMessage = message.toLowerCase();
+            
+            // Lista de respuestas predeterminadas
+            const responses = {
+                "dolor de cabeza": "Si tienes dolor de cabeza, es recomendable descansar en un lugar tranquilo, tomar agua y si el dolor persiste, podrías considerar tomar un analgésico como paracetamol o ibuprofeno.",
+                "¿qué puedo tomar?": "Dependiendo de los síntomas que presentes, podrías tomar paracetamol para el dolor o algún medicamento para la fiebre. Recuerda que siempre es mejor consultar a un profesional de salud.",
+                "resfriado": "Un resfriado se trata descansando, bebiendo líquidos y usando descongestionantes o antigripales. Si los síntomas persisten o empeoran, consulta a un médico.",
+                "tos": "La tos puede ser provocada por un resfriado o infección respiratoria. Si es persistente, prueba con jarabe para la tos, pero si dura más de una semana, consulta con un médico.",
+                "fiebre": "Si tienes fiebre, lo mejor es tomar paracetamol o ibuprofeno. Mantén una buena hidratación y, si la fiebre persiste por más de tres días o es muy alta, consulta a un médico.",
+                "dolor de estómago": "El dolor de estómago puede ser por indigestión o infecciones. Un antiácido puede aliviar los síntomas, pero si el dolor es severo o persistente, es importante consultar a un médico.",
+                "menstruación": "Durante la menstruación, es común experimentar dolores abdominales. Puedes tomar analgésicos como ibuprofeno para aliviar el dolor o Paño de agua tibia en el abdomen bajo y baños con agua caliente. Si los síntomas son muy intensos, consulta a un ginecólogo.",
+                "dolor menstrual": "El dolor menstrual es común y puede ser aliviado con analgésicos como el ibuprofeno. Asegúrate de descansar y mantenerte hidratada.",
+                "náuseas": "Las náuseas pueden ser causadas por diversas razones. Si son leves, intenta descansar y tomar agua. Si las náuseas son persistentes o severas, es recomendable consultar con un médico.",
+                "vómitos": "Si tienes vómitos, es importante mantenerte hidratado. Bebe líquidos en pequeñas cantidades y si los vómitos persisten, consulta a un médico.",
+                "diarrea": "La diarrea puede ser causada por infecciones o indigestión. Mantén una buena hidratación y si persiste por más de dos días, consulta a un médico.",
+                "estreñimiento": "El estreñimiento puede ser causado por una dieta baja en fibra o falta de líquidos. Asegúrate de beber suficiente agua y consumir alimentos ricos en fibra.",
+                "ansiedad": "Si estás experimentando ansiedad, es importante practicar técnicas de relajación y buscar apoyo emocional. Si es severa, consulta con un profesional de salud mental.",
+                "estrés": "El estrés puede ser manejado con ejercicios de respiración profunda, meditación y descanso. Si el estrés persiste, considera hablar con un terapeuta.",
+                "dolor muscular": "El dolor muscular puede aliviarse con descanso, estiramientos suaves y analgésicos como el ibuprofeno. Si el dolor persiste, consulta con un médico.",
+                "fractura": "Si te has fracturado un hueso, es importante inmovilizar la zona afectada y buscar atención médica inmediatamente. No trates de mover la zona lesionada.",
+                "quemadura": "Para quemaduras leves, coloca la zona afectada bajo agua fría. Si la quemadura es grave, busca atención médica inmediata.",
+                "esguince": "Si sospechas que tienes un esguince, es recomendable aplicar hielo en la zona afectada y mantenerla elevada. Si el dolor persiste, consulta con un médico.",
+                "dificultad para respirar": "Si tienes dificultad para respirar, es importante buscar atención médica inmediata, ya que podría ser un signo de una afección grave.",
+                "dolor en el pecho": "El dolor en el pecho puede ser grave. Si experimentas dolor en el pecho, dificultad para respirar o mareos, busca atención médica inmediatamente.",
+                "mareos": "Los mareos pueden ser causados por deshidratación o problemas circulatorios. Si los mareos son frecuentes o severos, consulta con un médico.",
+                "visión borrosa": "La visión borrosa puede ser un síntoma de varios problemas de salud, como problemas de presión ocular o diabetes. Si persiste, consulta a un oftalmólogo.",
+                "dificultad para tragar": "Si tienes dificultad para tragar, puede ser debido a una infección o problema en la garganta. Si los síntomas persisten, consulta a un médico.",
+                "calambres": "Los calambres pueden ser causados por deshidratación o falta de electrolitos. Asegúrate de beber suficiente agua y consumir alimentos ricos en potasio.",
+                "dolor en los riñones": "El dolor en los riñones puede ser causado por infecciones urinarias o cálculos renales. Si el dolor es intenso o recurrente, consulta a un médico.",
+                "sangrado": "Si estás experimentando sangrado excesivo, es importante buscar atención médica inmediata, especialmente si es por una herida o en la zona genital.",
+                "presión arterial alta": "La hipertensión arterial debe ser controlada con medicación y cambios en el estilo de vida. Si tienes síntomas de presión arterial alta, como dolor de cabeza o mareos, consulta a un médico.",
+                "presión arterial baja": "La presión arterial baja puede causar mareos y desmayos. Si tienes estos síntomas, es importante descansar y consumir líquidos con sal. Si persiste, consulta a un médico."
+            };
+            
+            // Verificar si alguna palabra clave está en el mensaje
+            for (const keyword in responses) {
+                if (lowerMessage.includes(keyword)) {
+                    return responses[keyword];
+                }
             }
-            if (message.toLowerCase().includes("¿qué puedo tomar?")) {
-                return "Dependiendo de los síntomas que presentes, podrías tomar paracetamol para el dolor o algún medicamento para la fiebre. Recuerda que siempre es mejor consultar a un profesional de salud.";
-            }
-            if (message.toLowerCase().includes("resfriado")) {
-                return "Un resfriado se trata descansando, bebiendo líquidos y usando descongestionantes o antigripales. Si los síntomas persisten o empeoran, consulta a un médico.";
-            }
-            if (message.toLowerCase().includes("tos")) {
-                return "La tos puede ser provocada por un resfriado o infección respiratoria. Si es persistente, prueba con jarabe para la tos, pero si dura más de una semana, consulta con un médico.";
-            }
-            if (message.toLowerCase().includes("fiebre")) {
-                return "Si tienes fiebre, lo mejor es tomar paracetamol o ibuprofeno. Mantén una buena hidratación y, si la fiebre persiste por más de tres días o es muy alta, consulta a un médico.";
-            }
-            if (message.toLowerCase().includes("dolor de estómago")) {
-                return "El dolor de estómago puede ser por indigestión o infecciones. Un antiácido puede aliviar los síntomas, pero si el dolor es severo o persistente, es importante consultar a un médico.";
-            }
-            if (message.toLowerCase().includes("menstruación")) {
-                return "Durante la menstruación, es común experimentar dolores abdominales. Puedes tomar analgésicos como ibuprofeno para aliviar el dolor o Paño de agua tibia en el abdomen bajo y baños con agua caliente. Si los síntomas son muy intensos, consulta a un ginecólogo.";
-            }
-            if (message.toLowerCase().includes("dolor menstrual")) {
-                return "El dolor menstrual es común y puede ser aliviado con analgésicos como el ibuprofeno. Asegúrate de descansar y mantenerte hidratada.";
-            }
-            if (message.toLowerCase().includes("náuseas")) {
-                return "Las náuseas pueden ser causadas por diversas razones. Si son leves, intenta descansar y tomar agua. Si las náuseas son persistentes o severas, es recomendable consultar con un médico.";
-            }
-            if (message.toLowerCase().includes("vómitos")) {
-                return "Si tienes vómitos, es importante mantenerte hidratado. Bebe líquidos en pequeñas cantidades y si los vómitos persisten, consulta a un médico.";
-            }
-            if (message.toLowerCase().includes("diarrea")) {
-                return "La diarrea puede ser causada por infecciones o indigestión. Mantén una buena hidratación y si persiste por más de dos días, consulta a un médico.";
-            }
-            if (message.toLowerCase().includes("estreñimiento")) {
-                return "El estreñimiento puede ser causado por una dieta baja en fibra o falta de líquidos. Asegúrate de beber suficiente agua y consumir alimentos ricos en fibra.";
-            }
-            if (message.toLowerCase().includes("ansiedad")) {
-                return "Si estás experimentando ansiedad, es importante practicar técnicas de relajación y buscar apoyo emocional. Si es severa, consulta con un profesional de salud mental.";
-            }
-            if (message.toLowerCase().includes("estrés")) {
-                return "El estrés puede ser manejado con ejercicios de respiración profunda, meditación y descanso. Si el estrés persiste, considera hablar con un terapeuta.";
-            }
-            if (message.toLowerCase().includes("dolor muscular")) {
-                return "El dolor muscular puede aliviarse con descanso, estiramientos suaves y analgésicos como el ibuprofeno. Si el dolor persiste, consulta con un médico.";
-            }
-            if (message.toLowerCase().includes("fractura")) {
-                return "Si te has fracturado un hueso, es importante inmovilizar la zona afectada y buscar atención médica inmediatamente. No trates de mover la zona lesionada.";
-            }
-            if (message.toLowerCase().includes("quemadura")) {
-                return "Para quemaduras leves, coloca la zona afectada bajo agua fría. Si la quemadura es grave, busca atención médica inmediata.";
-            }
-            if (message.toLowerCase().includes("esguince")) {
-                return "Si sospechas que tienes un esguince, es recomendable aplicar hielo en la zona afectada y mantenerla elevada. Si el dolor persiste, consulta con un médico.";
-            }
-            if (message.toLowerCase().includes("dificultad para respirar")) {
-                return "Si tienes dificultad para respirar, es importante buscar atención médica inmediata, ya que podría ser un signo de una afección grave.";
-            }
-            if (message.toLowerCase().includes("dolor en el pecho")) {
-                return "El dolor en el pecho puede ser grave. Si experimentas dolor en el pecho, dificultad para respirar o mareos, busca atención médica inmediatamente.";
-            }
-            if (message.toLowerCase().includes("mareos")) {
-                return "Los mareos pueden ser causados por deshidratación o problemas circulatorios. Si los mareos son frecuentes o severos, consulta con un médico.";
-            }
-            if (message.toLowerCase().includes("visión borrosa")) {
-                return "La visión borrosa puede ser un síntoma de varios problemas de salud, como problemas de presión ocular o diabetes. Si persiste, consulta a un oftalmólogo.";
-            }
-            if (message.toLowerCase().includes("dificultad para tragar")) {
-                return "Si tienes dificultad para tragar, puede ser debido a una infección o problema en la garganta. Si los síntomas persisten, consulta a un médico.";
-            }
-            if (message.toLowerCase().includes("calambres")) {
-                return "Los calambres pueden ser causados por deshidratación o falta de electrolitos. Asegúrate de beber suficiente agua y consumir alimentos ricos en potasio.";
-            }
-            if (message.toLowerCase().includes("dolor en los riñones")) {
-                return "El dolor en los riñones puede ser causado por infecciones urinarias o cálculos renales. Si el dolor es intenso o recurrente, consulta a un médico.";
-            }
-            if (message.toLowerCase().includes("sangrado")) {
-                return "Si estás experimentando sangrado excesivo, es importante buscar atención médica inmediatamente, especialmente si es por una herida o en la zona genital.";
-            }
-            if (message.toLowerCase().includes("presión arterial alta")) {
-                return "La hipertensión arterial debe ser controlada con medicación y cambios en el estilo de vida. Si tienes síntomas de presión arterial alta, como dolor de cabeza o mareos, consulta a un médico.";
-            }
-            if (message.toLowerCase().includes("presión arterial baja")) {
-                return "La presión arterial baja puede causar mareos y desmayos. Si tienes estos síntomas, es importante descansar y consumir líquidos con sal. Si persiste, consulta a un médico.";
-            }
-            // Respuesta predeterminada si no se encuentra una coincidencia
-            return "Hola, ¿en qué puedo ayudarte hoy?";
+            
+            // Mensaje predeterminado cuando no hay coincidencias
+            return "Lo siento, no puedo ayudarte con esa pregunta. Este asistente está limitado a responder consultas médicas básicas. Te recomendamos consultar con un profesional de la salud para obtener información más específica.";
         }
     </script>
 </body>
